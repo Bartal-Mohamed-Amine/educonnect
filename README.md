@@ -274,21 +274,4 @@ Les contributions sont les bienvenues ! Veuillez lire nos [guidelines de contrib
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
- 👥 Équipe
-
-- Product Manager: [Votre nom]
-- Lead Developer: [Votre nom]
-- UX/UI Designer: [Votre nom]
-- Backend Developer: [Votre nom]
-- Community Manager: [Votre nom]
-
- 📞 Support
-
-- Email: support@educonnect.com
-- Documentation: [docs.educonnect.com](https://docs.educonnect.com)
-- Status: [status.educonnect.com](https://status.educonnect.com)
-- Community: [community.educonnect.com](https://community.educonnect.com)
-
----
-
 EduConnect - Connecter chaque étudiant aux opportunités qui le feront réussir. 🎓✨
