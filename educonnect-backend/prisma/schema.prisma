@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatar    String?
+  
+  // Student specific fields
+  isStudent     Boolean @default(true)
+  university    String?
+  fieldOfStudy  String?
+  yearOfStudy   Int?
+  studentId     String? @unique
+  
+  // Preferences
+  notifications      Boolean @default(true)
+  locationServices   Boolean @default(true)
+  preferredCategories String[] @default([])
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  savedResources Resource[] @relation("SavedResources")
+  savedDeals     Deal[]     @relation("SavedDeals")
+  posts          Post[]
+  comments       Comment[]
+  applications   Application[]
+  
+  @@map("users")
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        ResourceType
+  category    String
+  provider    String
+  url         String
+  imageUrl    String?
+  
+  // Content metadata
+  isFree      Boolean @default(true)
+  deadline    DateTime?
+  location    String?
+  duration    String?
+  difficulty  Difficulty?
+  language    String @default("fr")
+  
+  // Engagement metrics
+  rating      Float?
+  viewCount   Int     @default(0)
+  saveCount   Int     @default(0)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  savedBy     User[]   @relation("SavedResources")
+  tags        Tag[]
+  applications Application[]
+  
+  @@map("resources")
+}
+
+model Deal {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  company     String
+  category    String
+  
+  // Pricing
+  discount        String
+  originalPrice   Float?
+  discountedPrice Float?
+  currency        String @default("EUR")
+  
+  // Location and validity
+  location    String?
+  latitude    Float?
+  longitude   Float?
+  validFrom   DateTime @default(now())
+  validUntil  DateTime
+  
+  // Requirements
+  requirements String[] @default([])
+  verified     Boolean @default(false)
+  
+  // Engagement metrics
+  viewCount   Int @default(0)
+  saveCount   Int @default(0)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  savedBy     User[] @relation("SavedDeals")
+  
+  @@map("deals")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  content   String
+  category  String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  comments  Comment[]
+  tags      Tag[]
+  
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  
+  @@map("comments")
+}
+
+model Application {
+  id        String           @id @default(cuid())
+  status    ApplicationStatus @default(PENDING)
+  
+  // Application specific data
+  notes     String?
+  documents String[] @default([])
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  resource  Resource @relation(fields: [resourceId], references: [id])
+  resourceId String
+  
+  @@map("applications")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  
+  // Relations
+  resources Resource[]
+  posts     Post[]
+  
+  @@map("tags")
+}
+
+enum ResourceType {
+  COURSE
+  CERTIFICATE
+  SOFTWARE
+  GRANT
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ApplicationStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+}

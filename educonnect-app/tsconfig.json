@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler"
+  },
+  "extends": "expo/tsconfig.base"
+}
